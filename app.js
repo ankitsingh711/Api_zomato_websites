@@ -4,10 +4,11 @@ const mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
 const dotenv = require('dotenv');
 dotenv.config()
-let port = process.env.PORT || 7000;
-const MongoLiveUrl = "mongodb+srv://zomato:test12345@zomato.glr5m.mongodb.net/zomatodata?retryWrites=true&w=majority";
+let port = process.env.PORT || 9000;
+const mongoUrl = "mongodb+srv://zomato:test12345@zomato.glr5m.mongodb.net/zomatodata?retryWrites=true&w=majority";
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { query } = require('express');
 const token = "8fbf8tyyt87378";
 
 // middleware
@@ -17,39 +18,45 @@ app.use(cors())
 
 
 app.get('/',(req,res) => {
-    res.send("Welcome to My Zomato App")
+    res.send("Welcome to Live Database World")
 })
 
+//location
 app.get('/location',(req,res) => {
-    db.collection('location').find().toArray((err,result) => {
+        db.collection('locations').find().toArray((err,result) => {
+            if(err) throw err;
+            res.send(result)
+        })
+})
+
+//quicksearch
+
+//location
+app.get('/quicksearch',(req,res) => {
+    db.collection('quicksearch').find().toArray((err,result) => {
         if(err) throw err;
         res.send(result)
     })
 })
 
-app.get('/restaurantmenu',(req,res) => {
-    db.collection('restaurantmenu').find().toArray((err,result) => {
+//restaurants
+app.get('/restaurant/',(req,res) => {
+
+    let query = {};
+    let stateId = Number(req.query.state_id)
+    let mealId = Number(req.query.meal_id)
+    if(stateId){
+        query = {state_id:stateId}
+    }else if(mealId){
+        query = {'mealTypes.mealtype_id':mealId}
+    }
+
+    db.collection('restaurants').find(query).toArray((err,result) => {
         if(err) throw err;
         res.send(result)
     })
 })
 
-app.get('/restaurantdata',(req,res) => {
-    db.collection('restaurantdata').find().toArray((err,result) => {
-        if(err) throw err;
-        res.send(result)
-    })
-})
-
-//restaurantDetails
-app.get('/details/:id',(req,res) => {
-    //let restId = Number(req.params.id);
-    let restId = mongo.ObjectId(req.params.id)
-    db.collection('restaurants').find({_id:restId}).toArray((err,result) => {
-        if(err) throw err;
-        res.send(result)
-    })
-})
 
 app.get('/filters/:mealId',(req,res) => {
     let sort = {cost:1}
@@ -85,26 +92,24 @@ app.get('/filters/:mealId',(req,res) => {
     })
 })
 
-app.get('/restaurantdata/:id',(req,res) => {
-    let id = req.params.id; 
-    console.log('>>>id',id) 
-    let query = {};
-    let stateId = (req.query.state_id);
-    let mealId = (req.query.meal_id);
-    if(stateId){
-        query = {state_id:stateId}
-    }else if(mealId){
-        query={'mealTypes.mealType_id':mealId}
-    }
-
-    db.collection('restaurantmenu').find().toArray((err,result) => {
+//restaurantDetails
+app.get('/details/:id',(req,res) => {
+    let restId = mongo.ObjectId(req.params.id)
+    db.collection('restaurants').find({_id:restId}).toArray((err,result) => {
         if(err) throw err;
         res.send(result)
     })
 })
 
-app.get('/mealtype',(req,res) => {
-    db.collection('mealtype').find().toArray((err,result) => {
+
+//menu
+app.get('/menu',(req,res) => {
+    let query = {}
+    let restId = Number(req.query.restId)
+    if(restId){
+        query = {restaurant_id:restId}
+    }
+    db.collection('restaurantmenu').find(query).toArray((err,result) => {
         if(err) throw err;
         res.send(result)
     })
@@ -114,7 +119,7 @@ app.get('/mealtype',(req,res) => {
 app.post('/menuItem',(req,res) => {
     console.log(req.body);
     if(Array.isArray(req.body)){
-        db.collection('menu').find({menu_id:{$in:req.body}}).toArray((err,result) => {
+        db.collection('restaurantmenu').find({menu_id:{$in:req.body}}).toArray((err,result) => {
             if(err) throw err;
             res.send(result)
         })
@@ -130,6 +135,7 @@ app.post('/placeOrder',(req,res) => {
         res.send('Order Placed')
     })
 })
+
 
 // View Order
 app.get('/viewOrder',(req,res) => {
@@ -151,14 +157,18 @@ app.delete('/deleteOrders',(req,res)=>{
     })
 })
 
+
 //update orders
 app.put('/updateOrder/:id',(req,res) => {
-    let oId = mongo.ObjectId(req.params.id);
+    console.log(">>>id",req.params.id)
+    console.log(">>>id",req.body)
+    let oId = Number(req.params.id)
     db.collection('orders').updateOne(
-        {_id:oId},
+        {id:oId},
         {$set:{
             "status":req.body.status,
-            "bank_name":req.body.bankName
+            "bank_name":req.body.bank_name,
+            "date":req.body.date
         }},(err,result) => {
             if(err) throw err
             res.send(`Status Updated to ${req.body.status}`)
@@ -167,7 +177,7 @@ app.put('/updateOrder/:id',(req,res) => {
 })
 
 // Connection with db
-MongoClient.connect(MongoLiveUrl, (err,client) => {
+MongoClient.connect(mongoUrl, (err,client) => {
     if(err) console.log(`Error while connecting`);
     db = client.db('zomatodata');
     app.listen(port,() => {
