@@ -5,11 +5,12 @@ const MongoClient = mongo.MongoClient;
 const dotenv = require('dotenv');
 dotenv.config()
 let port = process.env.PORT || 9000;
-const mongoUrl = "mongodb+srv://zomato:test12345@zomato.glr5m.mongodb.net/zomatodata?retryWrites=true&w=majority";
+// const mongoUrl = "mongodb+srv://ankit:ankit1234@zomato.glr5m.mongodb.net/zomatodata?retryWrites=true&w=majority";
+const mongoLiveUrl = process.env.mongoLiveUrl;
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { query } = require('express');
 const token = "8fbf8tyyt87378";
+
 
 // middleware
 app.use(bodyParser.urlencoded({extended:true}));
@@ -93,13 +94,15 @@ app.get('/filters/:mealId',(req,res) => {
 })
 
 //restaurantDetails
-app.get('/details/:id',(req,res) => {
-    let restId = mongo.ObjectId(req.params.id)
-    db.collection('restaurants').find({_id:restId}).toArray((err,result) => {
+app.get('/details/:id', (req,res) => {
+    //let restId = Number(req.params.id);
+    Number(req.params.id)
+        db.collection('restaurants').find({_id: req.params.id}).toArray((err,result) => {
         if(err) throw err;
         res.send(result)
     })
 })
+
 
 
 //menu
@@ -177,7 +180,7 @@ app.put('/updateOrder/:id',(req,res) => {
 })
 
 // Connection with db
-MongoClient.connect(mongoUrl, (err,client) => {
+MongoClient.connect(mongoLiveUrl, (err,client) => {
     if(err) console.log(`Error while connecting`);
     db = client.db('zomatodata');
     app.listen(port,() => {
