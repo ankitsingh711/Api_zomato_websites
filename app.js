@@ -93,15 +93,16 @@ app.get('/filters/:mealId',(req,res) => {
     })
 })
 
-//restaurantDetails
-app.get('/details/:id', (req,res) => {
-    //let restId = Number(req.params.id);
-    Number(req.params.id)
-        db.collection('restaurants').find({_id: req.params.id}).toArray((err,result) => {
-        if(err) throw err;
-        res.send(result)
-    })
-})
+app.get("/details/:restId", (req, res) => {
+    const restId = Number(req.params.restId);
+    db.collection("restaurants")
+    .find({ restaurant_id: restId })
+    .toArray((err, result) => {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
 
 
 
