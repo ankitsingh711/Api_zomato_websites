@@ -1,40 +1,40 @@
 Page No.1
 
 #List of City
->https://ankit-zomato.herokuapp.com/location
+>https://ankit-zomato-data-data.herokuapp.com/location
 >https://localhost:9700/location
 
 #List of Restaurants 
->https://ankit-zomato.herokuapp.com/restaurants
+>https://ankit-zomato-data-data.herokuapp.com/restaurants
 >https://localhost:9700/restaurantsdata
 
 #List of Restaurants wrt City
->https://ankit-zomato.herokuapp.com/restaurant?stateId=1
+>https://ankit-zomato-data-data.herokuapp.com/restaurant?stateId=1
 >http://localhost:9700/restaurants?state_id=4
 
 #List of MealType
->https://ankit-zomato.herokuapp.com/quicksearch
+>https://ankit-zomato-data.herokuapp.com/quicksearch
 >https://localhost:9700/mealtype
 
 
 
 //Page No. 2
 #List of Restaurants on the basis of meal
->https://ankit-zomato.herokuapp.com/restaurant?mealtype_id=
+>https://ankit-zomato-data.herokuapp.com/restaurant?mealtype_id=
 >
 
 #Filter on basis of cuisine
->https://ankit-zomato.herokuapp.com/filter/4?cuisine=1
+>https://ankit-zomato-data.herokuapp.com/filter/4?cuisine=1
 
 #Flter on basis of cost
->https://ankit-zomato.herokuapp.com/filter/1?hcost=1000&lcost=500
+>https://ankit-zomato-data.herokuapp.com/filter/1?hcost=1000&lcost=500
 
 #Sort(Low to High)
 
 //Page No.3
 #Details of restaurants
->https://ankit-zomato.herokuapp.com/details/1
->https://ankit-zomato.herokuapp.com/618776b162a1816f885956bf
+>https://ankit-zomato-data.herokuapp.com/details/1
+>https://ankit-zomato-data.herokuapp.com/618776b162a1816f885956bf
 
 #Menu on basis of restaurants
 >http://localhost:9700/menu?restId=8

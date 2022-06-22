@@ -4,8 +4,7 @@ const mongo = require('mongodb');
 const MongoClient = mongo.MongoClient;
 const dotenv = require('dotenv');
 dotenv.config()
-let port = process.env.PORT || 9000;
-// const mongoUrl = "mongodb+srv://ankit:ankit1234@zomato.glr5m.mongodb.net/zomatodata?retryWrites=true&w=majority";
+let port = process.env.PORT || 6600;
 const mongoLiveUrl = process.env.mongoLiveUrl;
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -40,11 +39,17 @@ app.get('/quicksearch',(req,res) => {
     })
 })
 
+
+
 //restaurants
-app.get('/restaurant/',(req,res) => {
+app.get('/restaurants/',(req,res) => {
+
+    // let id = req.params.id;
+    // let id  = req.query.id
+    // console.log(">>>id",id)
 
     let query = {};
-    let stateId = Number(req.query.state_id)
+    let stateId = Number(req.query.stateId)
     let mealId = Number(req.query.meal_id)
     if(stateId){
         query = {state_id:stateId}
@@ -57,6 +62,7 @@ app.get('/restaurant/',(req,res) => {
         res.send(result)
     })
 })
+
 
 
 app.get('/filters/:mealId',(req,res) => {
